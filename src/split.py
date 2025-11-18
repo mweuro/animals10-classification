@@ -33,7 +33,7 @@ def ensure_dir(path: str) -> None:
         os.makedirs(path)
 
 
-def main():
+def main() -> None:
     # Create directory structure (data --> train/val/test)
     for split in ["train", "val", "test"]:
         for en_name in TRANSLATE.values():

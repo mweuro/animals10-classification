@@ -1,4 +1,12 @@
+# NUMBER OF CLASSES
+num_classes: 10
+
 # DATALOADER PARAMS
 DATALOADER:
   batch_size: 32
   num_workers: 4
+
+# TRAINING PARAMS
+TRAINING:
+  epochs: 10
+  learning_rate: 0.0001

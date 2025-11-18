@@ -24,7 +24,7 @@ TRANSLATE = {"cane": "dog",
              "ragno": "spider", 
              "scoiattolo": "squirrel"}
 
-
+# Random seed
 random.seed(2137)
 
 

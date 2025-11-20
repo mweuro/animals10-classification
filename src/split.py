@@ -29,11 +29,27 @@ random.seed(2137)
 
 
 def ensure_dir(path: str) -> None:
+    """
+    Ensures that a directory exists; creates it if it does not.
+
+    Args:
+        path (str): Path to the directory.
+
+    Returns:
+        None
+    """
     if not os.path.exists(path):
         os.makedirs(path)
 
 
 def main() -> None:
+    """
+    Main function to split the dataset into train, validation, and test sets.
+    Creates the directory structure and copies images accordingly.
+
+    Returns:
+        None
+    """
     # Create directory structure (data --> train/val/test)
     for split in ["train", "val", "test"]:
         for en_name in TRANSLATE.values():

@@ -10,6 +10,18 @@ def evaluating_step(model: nn.Module,
                     val_loader: torch.utils.data.DataLoader,
                     criterion: nn.Module,
                     device: torch.device) -> tuple[float, float]:
+    """
+    Evaluates the model on the validation dataset.
+    
+    Args:
+        model (nn.Module): The neural network model to evaluate.
+        val_loader (DataLoader): DataLoader for the validation dataset.
+        criterion (nn.Module): Loss function.
+        device (torch.device): Device to perform computations on.
+        
+    Returns:
+        tuple: A tuple containing validation loss and accuracy.
+    """
     model.eval()
     correct = 0
     total = 0

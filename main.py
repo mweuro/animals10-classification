@@ -1,4 +1,5 @@
 import os
+import yaml
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -10,6 +11,19 @@ from src.train import training_step
 from src.utils import EarlyStopping, log_epoch
 
 
+def load_config(config_path: str = "config.yaml") -> dict:
+    """
+    Load configuration from YAML file.
+    
+    Args:
+        config_path (str): Path to the YAML configuration file.
+        
+    Returns:
+        dict: Configuration dictionary.
+    """
+    with open(config_path, 'r') as file:
+        config = yaml.safe_load(file)
+    return config
 
 
 def main(model: nn.Module, 
@@ -18,10 +32,28 @@ def main(model: nn.Module,
          optimizer: torch.optim.Optimizer, 
          criterion: nn.Module, 
          device: torch.device, 
-         epochs: int):
-    
+         config: dict):
+    """
+    Main training loop for the model.
 
-    early_stopper = EarlyStopping(patience=5)
+    Args:
+        model (nn.Module): The neural network model to train.
+        train_loader (DataLoader): DataLoader for the training dataset.
+        val_loader (DataLoader): DataLoader for the validation dataset.
+        optimizer (Optimizer): Optimizer for updating model parameters.
+        criterion (nn.Module): Loss function.
+        device (torch.device): Device to perform computations on.
+        config (dict): Configuration dictionary with training parameters.
+    
+    Returns:
+        None
+    """
+    epochs = config['training']['epochs']
+    patience = config['training']['patience']
+    reduce_lr_factor = config['training']['reduce_lr_factor']
+    reduce_lr_patience = config['training']['reduce_lr_patience']
+
+    early_stopper = EarlyStopping(patience=patience)
     best_val_loss = float("inf")
     csv_path = "logs/training_log.csv"
 
@@ -33,8 +65,8 @@ def main(model: nn.Module,
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(
         optimizer,
         mode="min",
-        factor=0.3,
-        patience=2
+        factor=reduce_lr_factor,
+        patience=reduce_lr_patience
     )
 
     for epoch in range(epochs):
@@ -56,17 +88,31 @@ def main(model: nn.Module,
         # Early stopping
         early_stopper(val_loss)
         if early_stopper.early_stop:
+            print(f"Early stopping triggered at epoch {epoch+1}")
             break
 
 
 if __name__ == "__main__":
-    model = ResNet18Model(num_classes=10, pretrained=True)
+    # Load configuration
+    config = load_config("config.yaml")
+    
+    # Model parameters from config
+    num_classes = config['training']['num_classes']
+    learning_rate = config['training']['learning_rate']
+    pretrained = config['model']['pretrained']
+    epochs = config['training']['epochs']
+    
+    # Initialize model
+    model = ResNet18Model(num_classes=num_classes, pretrained=pretrained)
     model.finetune()
+    
+    # Device setup
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
     
-    optimizer = optim.Adam(model.get_trainable_params(), lr=1e-4)
+    # Optimizer and loss
+    optimizer = optim.Adam(model.get_trainable_params(), lr=learning_rate)
     criterion = nn.CrossEntropyLoss()
-    epochs = 20
 
-    main(model, train_loader, val_loader, optimizer, criterion, device, epochs)
+    # Start training
+    main(model, train_loader, val_loader, optimizer, criterion, device, config)

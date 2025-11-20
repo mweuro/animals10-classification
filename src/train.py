@@ -11,7 +11,19 @@ def training_step(model: nn.Module,
                   optimizer: optim.Optimizer,
                   criterion: nn.Module,
                   device: torch.device) -> tuple[float, float]:
+    """
+    Performs a single training step (epoch) for the model.
 
+    Args:
+        model (nn.Module): The neural network model to train.
+        train_loader (torch.utils.data.DataLoader): DataLoader for the training data.
+        optimizer (optim.Optimizer): Optimizer for updating model parameters.
+        criterion (nn.Module): Loss function.
+        device (torch.device): Device to run the training on (CPU or GPU).
+
+    Returns:
+        tuple[float, float]: Training loss and accuracy for the epoch.
+    """
     model.train()
     running_loss = 0
     correct = 0

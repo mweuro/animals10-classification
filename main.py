@@ -48,10 +48,10 @@ def main(model: nn.Module,
     Returns:
         None
     """
-    epochs = config['training']['epochs']
-    patience = config['training']['patience']
-    reduce_lr_factor = config['training']['reduce_lr_factor']
-    reduce_lr_patience = config['training']['reduce_lr_patience']
+    epochs = config['TRAINING']['epochs']
+    patience = config['TRAINING']['patience']
+    reduce_lr_factor = config['TRAINING']['reduce_lr_factor']
+    reduce_lr_patience = config['TRAINING']['reduce_lr_patience']
 
     early_stopper = EarlyStopping(patience=patience)
     best_val_loss = float("inf")
@@ -97,10 +97,10 @@ if __name__ == "__main__":
     config = load_config("config.yaml")
     
     # Model parameters from config
-    num_classes = config['training']['num_classes']
-    learning_rate = config['training']['learning_rate']
-    pretrained = config['model']['pretrained']
-    epochs = config['training']['epochs']
+    num_classes = config['TRAINING']['num_classes']
+    learning_rate = config['TRAINING']['learning_rate']
+    pretrained = config['MODEL']['pretrained']
+    epochs = config['TRAINING']['epochs']
     
     # Initialize model
     model = ResNet18Model(num_classes=num_classes, pretrained=pretrained)
